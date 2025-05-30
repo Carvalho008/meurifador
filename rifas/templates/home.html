@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Página Inicial</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #222;
+            color: #eee;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            padding: 2rem;
+            text-align: center;
+        }
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 3rem;
+        }
+        nav {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            width: 100%;
+            max-width: 320px;
+        }
+        a {
+            color: #1e90ff;
+            text-decoration: none;
+            font-size: 1.8rem;
+            padding: 1rem 0;
+            border: 3px solid #1e90ff;
+            border-radius: 10px;
+            transition: background 0.3s, color 0.3s;
+            display: block;
+            user-select: none;
+        }
+        a:hover, a:focus {
+            background: #1e90ff;
+            color: #222;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+    <h1>Bem-vindo ao sistema de Rifas</h1>
+    <nav>
+        <a href="{% url 'lista_rifa' %}">Página de Rifas</a>
+        <a href="/admin/login/">Login</a>
+    </nav>
+</body>
+</html>

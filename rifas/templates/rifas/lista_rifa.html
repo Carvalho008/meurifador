@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Minha Rifa</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #2c2f33;
+            color: #eee;
+        }
+
+        h1 {
+            color: #7289da;
+        }
+
+        .grupo {
+            margin-bottom: 30px;
+            border: 1px solid #555;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #23272a;
+        }
+
+        .numero-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+        }
+
+        .numero {
+            width: 60px;
+            font-weight: bold;
+            color: #99aab5;
+        }
+
+        input[type="text"] {
+            width: 200px;
+            margin-right: 10px;
+            padding: 4px;
+            border: none;
+            border-radius: 4px;
+            background-color: #40444b;
+            color: #eee;
+        }
+
+        input[type="text"]::placeholder {
+            color: #b9bbbe;
+        }
+
+        label {
+            margin-right: 10px;
+            user-select: none;
+        }
+
+        input[type="checkbox"] {
+            transform: scale(1.2);
+            margin-left: 5px;
+            cursor: pointer;
+        }
+
+        button {
+            padding: 10px 18px;
+            margin-right: 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            filter: brightness(110%);
+        }
+
+        #btnSalvar {
+            background-color: #7289da;
+        }
+
+        #btnMostrarPagos {
+            background-color: #43b581;
+        }
+
+        #btnMostrarNaoPagos {
+            background-color: #f04747;
+        }
+
+        #btnCopiar {
+            background-color: #faa61a;
+        }
+
+        .btn-container {
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+
+        textarea {
+            width: 100%;
+            height: 150px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            border: none;
+            resize: none;
+            background-color: #40444b;
+            color: #eee;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .feedback {
+            margin-top: 8px;
+            color: #faa61a;
+            font-weight: bold;
+            font-style: italic;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Minha Rifa</h1>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        {% for grupo in grupos %}
+            {% with ultimo=grupo|last %}
+            <div class="grupo">
+                <h3>Números {{ grupo.0.numero }} a {{ ultimo.numero }}</h3>
+                {% for item in grupo %}
+                <div class="numero-item">
+                    <div class="numero">{{ item.numero }}</div>
+                    <input type="text" name="nome_{{ item.numero }}" value="{{ item.nome }}" placeholder="Nome">
+                    <label>
+                        Pago
+                        <input type="checkbox" name="pago_{{ item.numero }}" {% if item.pago %}checked{% endif %}>
+                    </label>
+                </div>
+                {% endfor %}
+            </div>
+            {% endwith %}
+        {% endfor %}
+
+        <button type="submit" id="btnSalvar">Salvar alterações</button>
+    </form>
+
+    <div class="btn-container">
+        <button type="button" id="btnMostrarPagos" onclick="mostrarPagos()">Mostrar pagos</button>
+        <button type="button" id="btnMostrarNaoPagos" onclick="mostrarNaoPagos()">Mostrar não pagos</button>
+        <button type="button" id="btnCopiar" onclick="copiarTexto()">Copiar lista</button>
+    </div>
+
+    <textarea id="listaOutput" readonly placeholder="Aqui aparecerá a lista"></textarea>
+    <div class="feedback" id="feedbackMsg">Texto copiado!</div>
+
+    <script>
+        function mostrarPagos() {
+            const items = document.querySelectorAll('.numero-item');
+            let texto = '';
+            items.forEach(item => {
+                const pago = item.querySelector('input[type="checkbox"]').checked;
+                if (pago) {
+                    const numero = item.querySelector('.numero').textContent.trim();
+                    const nome = item.querySelector('input[type="text"]').value.trim();
+                    texto += `${numero} - ${nome}\n`;
+                }
+            });
+            document.getElementById('listaOutput').value = texto || 'Nenhum número pago.';
+            esconderFeedback();
+        }
+
+        function mostrarNaoPagos() {
+            const items = document.querySelectorAll('.numero-item');
+            let texto = '';
+            items.forEach(item => {
+                const pago = item.querySelector('input[type="checkbox"]').checked;
+                const nome = item.querySelector('input[type="text"]').value.trim();
+                if (!pago && nome !== '') {
+                    const numero = item.querySelector('.numero').textContent.trim();
+                    texto += `${numero} - ${nome}\n`;
+                }
+            });
+            document.getElementById('listaOutput').value = texto || 'Nenhum número não pago com nome preenchido.';
+            esconderFeedback();
+        }
+
+        function copiarTexto() {
+            const textoArea = document.getElementById('listaOutput');
+            if (!textoArea.value) {
+                alert('Não há texto para copiar!');
+                return;
+            }
+            textoArea.select();
+            textoArea.setSelectionRange(0, 99999); // Para dispositivos móveis
+            try {
+                document.execCommand('copy');
+                mostrarFeedback('Texto copiado!');
+            } catch (err) {
+                alert('Não foi possível copiar o texto.');
+            }
+            window.getSelection().removeAllRanges();
+        }
+
+        function mostrarFeedback(msg) {
+            const feedback = document.getElementById('feedbackMsg');
+            feedback.textContent = msg;
+            feedback.style.display = 'block';
+            setTimeout(() => {
+                feedback.style.display = 'none';
+            }, 2000);
+        }
+
+        function esconderFeedback() {
+            document.getElementById('feedbackMsg').style.display = 'none';
+        }
+    </script>
+</body>
+
+</html>
