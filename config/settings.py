@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-11kxx&(4j$zm8bs%c=pym)%!*51o(veri4qt-eh^_$%%4=7t@!
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['meurifador.onrender.com', 'localhost', '127.0.0.1']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
