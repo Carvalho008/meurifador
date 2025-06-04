@@ -16,10 +16,11 @@ def criar_numeros(request):
             criados += 1
     return HttpResponse(f'{criados} números criados com sucesso!')
 
-@login_required
 def lista_rifa(request):
+    if not request.user.is_authenticated:
+        return redirect('home')  # ou redirect('/') diretamente
+
     if request.method == "POST":
-        # Atualizar nomes e status de pagamento
         for numero_obj in NumeroRifa.objects.all():
             nome = request.POST.get(f'nome_{numero_obj.numero}', '').strip()
             pago = request.POST.get(f'pago_{numero_obj.numero}') == 'on'
@@ -29,7 +30,6 @@ def lista_rifa(request):
         return redirect('lista_rifa')
 
     numeros = list(NumeroRifa.objects.all().order_by('numero'))
-    # Quebrar em grupos de 20
     grupos = [numeros[i:i+20] for i in range(0, len(numeros), 20)]
 
     return render(request, 'rifas/lista_rifa.html', {'grupos': grupos})

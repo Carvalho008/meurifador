@@ -3,10 +3,15 @@
 
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Minha Rifa</title>
+  <link rel="shortcut icon"
+    href="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSOTHL7G8ofmlBKV3cVibvG2iz3S0nO6WvSQw&s"
+    type="image/x-icon">
   <style>
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       font-family: Arial, sans-serif;
@@ -80,7 +85,7 @@
     }
 
     .btn-container,
-    form > button {
+    form>button {
       display: flex;
       justify-content: center;
       flex-wrap: wrap;
@@ -99,13 +104,28 @@
       font-size: 1rem;
     }
 
-    button:hover { filter: brightness(1.1); }
+    button:hover {
+      filter: brightness(1.1);
+    }
 
-    #btnSalvar { background-color: #7289da; width: 100%; max-width: 300px; }
+    #btnSalvar {
+      background-color: #7289da;
+      width: 100%;
+      max-width: 300px;
+    }
 
-    #btnMostrarPagos { background-color: #43b581; }
-    #btnMostrarNaoPagos { background-color: #f04747; }
-    #btnCopiar { background-color: #faa61a; color: #222; }
+    #btnMostrarPagos {
+      background-color: #43b581;
+    }
+
+    #btnMostrarNaoPagos {
+      background-color: #f04747;
+    }
+
+    #btnCopiar {
+      background-color: #faa61a;
+      color: #222;
+    }
 
     textarea {
       width: 100%;
@@ -139,21 +159,21 @@
     {% csrf_token %}
 
     {% for grupo in grupos %}
-      {% with ultimo=grupo|last %}
-      <div class="grupo">
-        <h3>Números {{ grupo.0.numero }} a {{ ultimo.numero }}</h3>
-        {% for item in grupo %}
-        <div class="numero-item">
-          <div class="numero">{{ item.numero }}</div>
-          <input type="text" name="nome_{{ item.numero }}" value="{{ item.nome }}" placeholder="Nome">
-          <label>
-            Pago
-            <input type="checkbox" name="pago_{{ item.numero }}" {% if item.pago %}checked{% endif %}>
-          </label>
-        </div>
-        {% endfor %}
+    {% with ultimo=grupo|last %}
+    <div class="grupo">
+      <h3>Números {{ grupo.0.numero }} a {{ ultimo.numero }}</h3>
+      {% for item in grupo %}
+      <div class="numero-item">
+        <div class="numero">{{ item.numero }}</div>
+        <input type="text" name="nome_{{ item.numero }}" value="{{ item.nome }}" placeholder="Nome">
+        <label>
+          Pago
+          <input type="checkbox" name="pago_{{ item.numero }}" {% if item.pago %}checked{% endif %}>
+        </label>
       </div>
-      {% endwith %}
+      {% endfor %}
+    </div>
+    {% endwith %}
     {% endfor %}
 
     <button type="submit" id="btnSalvar">Salvar alterações</button>
